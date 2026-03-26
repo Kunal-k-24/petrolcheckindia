@@ -106,7 +106,10 @@ function displayPumps(pumps) {
         if (index > 0 && index % 3 === 0) {
             const adDiv = document.createElement('div');
             adDiv.className = 'native-ad';
-            adDiv.innerHTML = '<p>Advertisement</p>';
+            adDiv.innerHTML = `
+                <script async="async" data-cfasync="false" src="https://pl28986957.profitablecpmratenetwork.com/09327e3fdccc244f138287e9b6798e5b/invoke.js"></script>
+                <div id="container-09327e3fdccc244f138287e9b6798e5b"></div>
+            `;
             listContainer.appendChild(adDiv);
         }
 
@@ -168,8 +171,9 @@ function deg2rad(deg) {
 function triggerPopunder() {
     if (!popunderTriggered) {
         console.log('Popunder triggered (Adsterra)');
-        // In a real scenario, this would be the Adsterra script execution
-        // window.open('https://adsterra-url.com', '_blank');
+        const script = document.createElement('script');
+        script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
+        document.body.appendChild(script);
         popunderTriggered = true;
     }
 }
