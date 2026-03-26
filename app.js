@@ -257,9 +257,16 @@ const POPUNDER_THRESHOLD = 2; // Trigger every 2 clicks
 
 function triggerPopunder() {
     popunderCount++;
+    console.log('Popunder trigger called - Count:', popunderCount);
     if (popunderCount % POPUNDER_THRESHOLD === 0) {
-        console.log('Popunder triggered (Adsterra) - Count:', popunderCount);
+        console.log('Popunder threshold reached - Triggering Adsterra script');
+        
+        // Remove old script if it exists to allow re-triggering
+        const oldScript = document.getElementById('adsterra-popunder');
+        if (oldScript) oldScript.remove();
+
         const script = document.createElement('script');
+        script.id = 'adsterra-popunder';
         script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
         document.body.appendChild(script);
     }
