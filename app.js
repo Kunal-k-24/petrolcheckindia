@@ -8,6 +8,74 @@ let pumpMarkers = [];
 let userLocation = { lat: 18.5204, lng: 73.8567 }; // Default: Pune
 let popunderTriggered = false;
 
+let currentLang = 'en';
+const translations = {
+    en: {
+        title: "Petrol Check",
+        subtitle: "Real-time fuel availability near you",
+        searchBtn: "Find Nearby Petrol Pumps",
+        available: "Available",
+        unavailable: "Not Available",
+        away: "km away",
+        lastUpdated: "Last updated",
+        noPumps: "No petrol pumps found in the database.",
+        tapDetails: "Tap to view details →",
+        youAreHere: "You are here",
+        locationError: "Location access denied or unavailable. Defaulting to Pune. You can enable location in settings for better results.",
+        requestingLocation: "Requesting location..."
+    },
+    hi: {
+        title: "पेट्रोल चेक",
+        subtitle: "आपके पास ईंधन की उपलब्धता की जानकारी",
+        searchBtn: "नजदीकी पेट्रोल पंप खोजें",
+        available: "उपलब्ध",
+        unavailable: "उपलब्ध नहीं",
+        away: "किमी दूर",
+        lastUpdated: "अंतिम अपडेट",
+        noPumps: "डेटाबेस में कोई पेट्रोल पंप नहीं मिला।",
+        tapDetails: "विवरण देखने के लिए टैप करें →",
+        youAreHere: "आप यहाँ हैं",
+        locationError: "स्थान की अनुमति नहीं मिली। पुणे का स्थान दिखाया जा रहा है। बेहतर परिणामों के लिए सेटिंग्स में स्थान सक्षम करें।",
+        requestingLocation: "स्थान खोजा जा रहा है..."
+    },
+    mr: {
+        title: "पेट्रोल चेक",
+        subtitle: "तुमच्या जवळील इंधन उपलब्धतेची माहिती",
+        searchBtn: "जवळील पेट्रोल पंप शोधा",
+        available: "उपलब्ध",
+        unavailable: "उपलब्ध नाही",
+        away: "किमी लांब",
+        lastUpdated: "शेवटचे अपडेट",
+        noPumps: "डेटाबेसमध्ये कोणतेही पेट्रोल पंप आढळले नाहीत.",
+        tapDetails: "तपशील पाहण्यासाठी टॅप करा →",
+        youAreHere: "तुम्ही इथे आहात",
+        locationError: "स्थान परवानगी नाकारली. पुणे स्थान दाखवले जात आहे. चांगल्या निकालांसाठी सेटिंग्जमध्ये स्थान सक्षम करा.",
+        requestingLocation: "स्थान शोधले जात आहे..."
+    }
+};
+
+function changeLanguage(lang) {
+    currentLang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = translations[lang][key];
+    });
+    
+    // Update active button state
+    document.querySelectorAll('.lang-switcher button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-${lang}`).classList.add('active');
+    
+    // Refresh list if data exists
+    if (window.lastFetchedPumps) {
+        displayPumps(window.lastFetchedPumps);
+    }
+    
+    // Update map marker if it exists
+    if (userMarker) {
+        userMarker.setPopupContent(translations[lang].youAreHere);
+    }
+}
+
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
     initMap();
@@ -29,12 +97,12 @@ function initMap() {
     }).addTo(map);
 
     userMarker = L.marker([userLocation.lat, userLocation.lng]).addTo(map)
-        .bindPopup('You are here').openPopup();
+        .bindPopup(translations[currentLang].youAreHere).openPopup();
 }
 
 function getLocation() {
     if (navigator.geolocation) {
-        console.log('Requesting location...');
+        console.log(translations[currentLang].requestingLocation);
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 console.log('Location granted:', position.coords.latitude, position.coords.longitude);
@@ -47,7 +115,7 @@ function getLocation() {
             },
             (error) => {
                 console.error('Location error:', error.message);
-                alert('Location access denied or unavailable. Defaulting to Pune. You can enable location in settings for better results.');
+                alert(translations[currentLang].locationError);
                 fetchPumps();
             },
             {
@@ -85,6 +153,7 @@ async function fetchPumps() {
         })).sort((a, b) => a.distance - b.distance);
 
         // Filter to nearby (e.g., within 50km) or just show all sorted by distance
+        window.lastFetchedPumps = pumpsWithDistance;
         displayPumps(pumpsWithDistance);
         updatePumpMarkers(pumpsWithDistance);
     } catch (err) {
@@ -97,7 +166,7 @@ function displayPumps(pumps) {
     listContainer.innerHTML = '';
 
     if (pumps.length === 0) {
-        listContainer.innerHTML = '<p style="text-align:center; padding: 20px;">No petrol pumps found in the database.</p>';
+        listContainer.innerHTML = `<p style="text-align:center; padding: 20px;">${translations[currentLang].noPumps}</p>`;
         return;
     }
 
@@ -130,7 +199,7 @@ function displayPumps(pumps) {
         card.onclick = () => triggerPopunder();
         
         const statusClass = pump.status === 'available' ? 'status-available' : 'status-unavailable';
-        const statusText = pump.status === 'available' ? 'Available' : 'Not Available';
+        const statusText = pump.status === 'available' ? translations[currentLang].available : translations[currentLang].unavailable;
 
         card.innerHTML = `
             <div class="pump-header">
@@ -138,8 +207,11 @@ function displayPumps(pumps) {
                 <span class="status-badge ${statusClass}">${statusText}</span>
             </div>
             <div class="pump-details">
-                <p>${pump.distance.toFixed(1)} km away</p>
-                <p>Last updated: ${new Date(pump.updated_at).toLocaleString()}</p>
+                <p>${pump.distance.toFixed(1)} ${translations[currentLang].away}</p>
+                <p>${translations[currentLang].lastUpdated}: ${new Date(pump.updated_at).toLocaleString()}</p>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--primary-color); margin-top: 0.8rem; font-weight: bold; text-align: right; opacity: 0.8;">
+                ${translations[currentLang].tapDetails}
             </div>
         `;
         listContainer.appendChild(card);

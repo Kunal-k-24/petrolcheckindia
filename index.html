@@ -23,14 +23,19 @@
             <script type="text/javascript" src="https://www.highperformanceformat.com/20dd0d2cf51377f817cef584db5b8cf9/invoke.js"></script>
         </div>
         <nav>
-            <h1>Petrol Check</h1>
-            <p>Real-time fuel availability near you</p>
+            <h1 data-i18n="title">Petrol Check</h1>
+            <p data-i18n="subtitle">Real-time fuel availability near you</p>
+            <div class="lang-switcher">
+                <button onclick="changeLanguage('en')" id="btn-en" class="active">EN</button>
+                <button onclick="changeLanguage('hi')" id="btn-hi">हिन्दी</button>
+                <button onclick="changeLanguage('mr')" id="btn-mr">मराठी</button>
+            </div>
         </nav>
     </header>
 
     <main>
         <section id="search-section">
-            <button id="find-pumps-btn" class="primary-btn">Find Nearby Petrol Pumps</button>
+            <button id="find-pumps-btn" class="primary-btn" data-i18n="searchBtn">Find Nearby Petrol Pumps</button>
         </section>
 
         <section id="map-container">
