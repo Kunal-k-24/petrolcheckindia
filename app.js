@@ -106,8 +106,9 @@ function displayPumps(pumps) {
         if (index > 0 && index % 2 === 0) {
             const adDiv = document.createElement('div');
             adDiv.className = 'native-ad';
-            const adId = `ad-container-${Math.random().toString(36).substr(2, 9)}`;
-            adDiv.id = adId;
+            // Use a unique ID for each ad unit instance if required by Adsterra
+            const containerId = `container-09327e3fdccc244f138287e9b6798e5b-${index}`;
+            adDiv.innerHTML = `<div id="${containerId}"></div>`;
             listContainer.appendChild(adDiv);
 
             // Execute script manually since innerHTML doesn't run scripts
@@ -116,10 +117,11 @@ function displayPumps(pumps) {
             script.dataset.cfasync = "false";
             script.src = "https://pl28986957.profitablecpmratenetwork.com/09327e3fdccc244f138287e9b6798e5b/invoke.js";
             
-            const containerDiv = document.createElement('div');
-            containerDiv.id = "container-09327e3fdccc244f138287e9b6798e5b";
-            
-            adDiv.appendChild(containerDiv);
+            // Adsterra scripts often look for a specific container ID. 
+            // If the script is hardcoded to one ID, we must ensure it exists.
+            const genericContainer = document.createElement('div');
+            genericContainer.id = "container-09327e3fdccc244f138287e9b6798e5b";
+            adDiv.appendChild(genericContainer);
             adDiv.appendChild(script);
         }
 
