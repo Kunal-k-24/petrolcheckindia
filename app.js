@@ -261,13 +261,23 @@ function triggerPopunder() {
     if (popunderCount % POPUNDER_THRESHOLD === 0) {
         console.log('Popunder threshold reached - Triggering Adsterra script');
         
-        // Remove old script if it exists to allow re-triggering
-        const oldScript = document.getElementById('adsterra-popunder');
-        if (oldScript) oldScript.remove();
-
-        const script = document.createElement('script');
-        script.id = 'adsterra-popunder';
-        script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
-        document.body.appendChild(script);
+        // Adsterra scripts often need to be injected once and they handle the clicks.
+        // If we inject it every 2 clicks, it might conflict.
+        // Let's try to inject it once but ensure it's always ready.
+        
+        if (!document.getElementById('adsterra-popunder')) {
+            const script = document.createElement('script');
+            script.id = 'adsterra-popunder';
+            script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
+            document.body.appendChild(script);
+        } else {
+            // For some ad networks, just re-adding the script triggers the popunder again
+            const oldScript = document.getElementById('adsterra-popunder');
+            oldScript.remove();
+            const newScript = document.createElement('script');
+            newScript.id = 'adsterra-popunder';
+            newScript.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
+            document.body.appendChild(newScript);
+        }
     }
 }
