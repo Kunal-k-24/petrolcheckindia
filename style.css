@@ -82,32 +82,58 @@ main {
 
 .pump-card {
     background: var(--card-bg);
-    padding: 1rem;
+    padding: 1.2rem;
     margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
 }
 
-.pump-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
+.pump-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.pump-card:active {
+    transform: scale(0.98);
+}
+
+.pump-card::after {
+    content: 'Tap to view details →';
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    margin-top: 0.8rem;
+    font-weight: bold;
+    text-align: right;
+    opacity: 0.8;
 }
 
 .pump-name {
-    font-weight: bold;
-    font-size: 1.1rem;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
 }
 
 .status-badge {
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
     color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.bottom-ad-container {
+    margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .status-available { background-color: var(--available-color); }

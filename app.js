@@ -102,8 +102,8 @@ function displayPumps(pumps) {
     }
 
     pumps.forEach((pump, index) => {
-        // Native Ad Placement every 3 items
-        if (index > 0 && index % 3 === 0) {
+        // Native Ad Placement every 2 items for higher frequency
+        if (index > 0 && index % 2 === 0) {
             const adDiv = document.createElement('div');
             adDiv.className = 'native-ad';
             const adId = `ad-container-${Math.random().toString(36).substr(2, 9)}`;
