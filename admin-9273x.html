@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Petrol Check</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .admin-table button {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background: #f0f0f0;
+        }
+        .admin-table button:hover {
+            background: #e0e0e0;
+        }
+        .status-cell {
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+        .status-available { color: green; }
+        .status-unavailable { color: red; }
+        
+        #admin-map {
+            height: 300px;
+            width: 100%;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        .add-pump-form {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+        <h2>Admin Access</h2>
+        <input type="password" id="admin-password" placeholder="Enter password" style="padding:10px; margin:10px;">
+        <button onclick="checkPassword()" class="primary-btn" style="width:200px;">Login</button>
+    </div>
+
+    <div class="admin-container">
+        <h1>Admin Dashboard</h1>
+        
+        <div class="add-pump-form">
+            <h2>Add New Petrol Pump</h2>
+            <p>Drag the blue marker on the map to set the pump location.</p>
+            <div id="admin-map"></div>
+            <div class="form-group">
+                <label for="new-pump-name">Pump Name</label>
+                <input type="text" id="new-pump-name" placeholder="e.g. HP Petrol Pump - City Center">
+            </div>
+            <div class="form-group">
+                <label for="new-pump-status">Initial Status</label>
+                <select id="new-pump-status">
+                    <option value="available">Available</option>
+                    <option value="unavailable">Not Available</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Latitude</label>
+                    <input type="text" id="new-pump-lat" readonly>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Longitude</label>
+                    <input type="text" id="new-pump-lng" readonly>
+                </div>
+            </div>
+            <button onclick="addNewPump()" class="primary-btn">Add Petrol Pump</button>
+        </div>
+
+        <h2>Existing Petrol Pumps</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="admin-pump-list">
+                <!-- Pumps will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const SUPABASE_URL = 'https://wozsbchxjgtdbuyyvmoi.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_-qomqSHbC0p4AVNsH2BsRw_h3el8I8v';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let adminMap;
+        let draggableMarker;
+        const defaultLocation = [19.8502, 75.3244]; // Aurangabad
+
+        function checkPassword() {
+            const pass = document.getElementById('admin-password').value;
+            if (pass === 'admin123') { // Simple password as requested
+                document.getElementById('login-overlay').style.display = 'none';
+                initAdminMap();
+                loadPumps();
+            } else {
+                alert('Wrong password');
+            }
+        }
+
+        function initAdminMap() {
+            adminMap = L.map('admin-map').setView(defaultLocation, 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }).addTo(adminMap);
+
+            draggableMarker = L.marker(defaultLocation, {
+                draggable: true
+            }).addTo(adminMap);
+
+            updateFormCoords(defaultLocation[0], defaultLocation[1]);
+
+            draggableMarker.on('dragend', function(event) {
+                const marker = event.target;
+                const position = marker.getLatLng();
+                updateFormCoords(position.lat, position.lng);
+            });
+
+            adminMap.on('click', function(e) {
+                draggableMarker.setLatLng(e.latlng);
+                updateFormCoords(e.latlng.lat, e.latlng.lng);
+            });
+        }
+
+        function updateFormCoords(lat, lng) {
+            document.getElementById('new-pump-lat').value = lat.toFixed(6);
+            document.getElementById('new-pump-lng').value = lng.toFixed(6);
+        }
+
+        async function addNewPump() {
+            const name = document.getElementById('new-pump-name').value;
+            const status = document.getElementById('new-pump-status').value;
+            const lat = parseFloat(document.getElementById('new-pump-lat').value);
+            const lng = parseFloat(document.getElementById('new-pump-lng').value);
+
+            if (!name) {
+                alert('Please enter a pump name');
+                return;
+            }
+
+            const { error } = await _supabase
+                .from('petrol_pumps')
+                .insert([{ name, status, latitude: lat, longitude: lng }]);
+
+            if (error) {
+                alert('Error adding pump: ' + error.message);
+            } else {
+                alert('Pump added successfully!');
+                document.getElementById('new-pump-name').value = '';
+                loadPumps();
+            }
+        }
+
+        async function deletePump(id) {
+            if (!confirm('Are you sure you want to delete this pump?')) return;
+            
+            const { error } = await _supabase
+                .from('petrol_pumps')
+                .delete()
+                .eq('id', id);
+            
+            if (error) alert('Error deleting pump');
+            else loadPumps();
+        }
+
+        async function loadPumps() {
+            const { data, error } = await _supabase.from('petrol_pumps').select('*');
+            if (error) return console.error(error);
+
+            const container = document.getElementById('admin-pump-list');
+            container.innerHTML = '';
+            data.forEach(pump => {
+                const tr = document.createElement('tr');
+                const statusClass = pump.status === 'available' ? 'status-available' : 'status-unavailable';
+                tr.innerHTML = `
+                    <td>${pump.name}</td>
+                    <td class="status-cell ${statusClass}">${pump.status}</td>
+                    <td>
+                        <button onclick="updateStatus('${pump.id}', '${pump.status === 'available' ? 'unavailable' : 'available'}')">
+                            Mark as ${pump.status === 'available' ? 'Unavailable' : 'Available'}
+                        </button>
+                        <button onclick="deletePump('${pump.id}')" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c; margin-left: 5px;">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                container.appendChild(tr);
+            });
+        }
+
+        async function updateStatus(id, newStatus) {
+            const { error } = await _supabase
+                .from('petrol_pumps')
+                .update({ status: newStatus, updated_at: new Date().toISOString() })
+                .eq('id', id);
+            
+            if (error) alert('Error updating status');
+            else loadPumps();
+        }
+    </script>
+</body>
+</html>

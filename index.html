@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Petrol Check India - Find Nearby Fuel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+</head>
+<body>
+    <header>
+        <div class="banner-ad" id="top-banner-ad">
+            <!-- Adsterra Banner Ad Placeholder -->
+            <div class="ad-placeholder">Advertisement</div>
+        </div>
+        <nav>
+            <h1>Petrol Check</h1>
+            <p>Real-time fuel availability near you</p>
+        </nav>
+    </header>
+
+    <main>
+        <section id="search-section">
+            <button id="find-pumps-btn" class="primary-btn">Find Nearby Petrol Pumps</button>
+        </section>
+
+        <section id="map-container">
+            <div id="map"></div>
+        </section>
+
+        <section id="pump-list-section">
+            <div id="pump-list">
+                <!-- Pump cards will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Petrol Check India</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="app.js"></script>
+</body>
+</html>
