@@ -252,12 +252,15 @@ function deg2rad(deg) {
     return deg * (Math.PI/180);
 }
 
+let popunderCount = 0;
+const POPUNDER_THRESHOLD = 2; // Trigger every 2 clicks
+
 function triggerPopunder() {
-    if (!popunderTriggered) {
-        console.log('Popunder triggered (Adsterra)');
+    popunderCount++;
+    if (popunderCount % POPUNDER_THRESHOLD === 0) {
+        console.log('Popunder triggered (Adsterra) - Count:', popunderCount);
         const script = document.createElement('script');
         script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
         document.body.appendChild(script);
-        popunderTriggered = true;
     }
 }
