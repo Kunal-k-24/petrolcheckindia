@@ -106,11 +106,21 @@ function displayPumps(pumps) {
         if (index > 0 && index % 3 === 0) {
             const adDiv = document.createElement('div');
             adDiv.className = 'native-ad';
-            adDiv.innerHTML = `
-                <script async="async" data-cfasync="false" src="https://pl28986957.profitablecpmratenetwork.com/09327e3fdccc244f138287e9b6798e5b/invoke.js"></script>
-                <div id="container-09327e3fdccc244f138287e9b6798e5b"></div>
-            `;
+            const adId = `ad-container-${Math.random().toString(36).substr(2, 9)}`;
+            adDiv.id = adId;
             listContainer.appendChild(adDiv);
+
+            // Execute script manually since innerHTML doesn't run scripts
+            const script = document.createElement('script');
+            script.async = true;
+            script.dataset.cfasync = "false";
+            script.src = "https://pl28986957.profitablecpmratenetwork.com/09327e3fdccc244f138287e9b6798e5b/invoke.js";
+            
+            const containerDiv = document.createElement('div');
+            containerDiv.id = "container-09327e3fdccc244f138287e9b6798e5b";
+            
+            adDiv.appendChild(containerDiv);
+            adDiv.appendChild(script);
         }
 
         const card = document.createElement('div');
