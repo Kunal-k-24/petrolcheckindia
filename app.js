@@ -85,6 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerPopunder();
         getLocation(); // Request location only on user click
     });
+
+    // Global click listener for popunder on every click
+    document.addEventListener('click', () => {
+        triggerPopunder();
+    }, true);
+
+    // Scroll listener for popunder
+    let scrollCount = 0;
+    window.addEventListener('scroll', () => {
+        scrollCount++;
+        if (scrollCount % 100 === 0) { // Trigger every ~100 scroll units
+            triggerPopunder();
+        }
+    });
 });
 
 function initMap() {
@@ -95,6 +109,11 @@ function initMap() {
         subdomains: 'abcd',
         maxZoom: 20
     }).addTo(map);
+
+    // Map click trigger
+    map.on('click', () => {
+        triggerPopunder();
+    });
 
     userMarker = L.marker([userLocation.lat, userLocation.lng]).addTo(map)
         .bindPopup(translations[currentLang].youAreHere).openPopup();
@@ -171,29 +190,6 @@ function displayPumps(pumps) {
     }
 
     pumps.forEach((pump, index) => {
-        // Native Ad Placement every 2 items for higher frequency
-        if (index > 0 && index % 2 === 0) {
-            const adDiv = document.createElement('div');
-            adDiv.className = 'native-ad';
-            // Use a unique ID for each ad unit instance if required by Adsterra
-            const containerId = `container-09327e3fdccc244f138287e9b6798e5b-${index}`;
-            adDiv.innerHTML = `<div id="${containerId}"></div>`;
-            listContainer.appendChild(adDiv);
-
-            // Execute script manually since innerHTML doesn't run scripts
-            const script = document.createElement('script');
-            script.async = true;
-            script.dataset.cfasync = "false";
-            script.src = "https://pl28986957.profitablecpmratenetwork.com/09327e3fdccc244f138287e9b6798e5b/invoke.js";
-            
-            // Adsterra scripts often look for a specific container ID. 
-            // If the script is hardcoded to one ID, we must ensure it exists.
-            const genericContainer = document.createElement('div');
-            genericContainer.id = "container-09327e3fdccc244f138287e9b6798e5b";
-            adDiv.appendChild(genericContainer);
-            adDiv.appendChild(script);
-        }
-
         const card = document.createElement('div');
         card.className = 'pump-card';
         card.onclick = () => triggerPopunder();
@@ -252,32 +248,17 @@ function deg2rad(deg) {
     return deg * (Math.PI/180);
 }
 
-let popunderCount = 0;
-const POPUNDER_THRESHOLD = 2; // Trigger every 2 clicks
-
 function triggerPopunder() {
-    popunderCount++;
-    console.log('Popunder trigger called - Count:', popunderCount);
-    if (popunderCount % POPUNDER_THRESHOLD === 0) {
-        console.log('Popunder threshold reached - Triggering Adsterra script');
-        
-        // Adsterra scripts often need to be injected once and they handle the clicks.
-        // If we inject it every 2 clicks, it might conflict.
-        // Let's try to inject it once but ensure it's always ready.
-        
-        if (!document.getElementById('adsterra-popunder')) {
-            const script = document.createElement('script');
-            script.id = 'adsterra-popunder';
-            script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
-            document.body.appendChild(script);
-        } else {
-            // For some ad networks, just re-adding the script triggers the popunder again
-            const oldScript = document.getElementById('adsterra-popunder');
-            oldScript.remove();
-            const newScript = document.createElement('script');
-            newScript.id = 'adsterra-popunder';
-            newScript.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
-            document.body.appendChild(newScript);
-        }
-    }
+    console.log('Popunder trigger called');
+    
+    // Adsterra scripts often need to be injected once and they handle the clicks.
+    // If we want it on "every click", we re-inject the script tag frequently.
+    
+    const oldScript = document.getElementById('adsterra-popunder');
+    if (oldScript) oldScript.remove();
+
+    const script = document.createElement('script');
+    script.id = 'adsterra-popunder';
+    script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
+    document.body.appendChild(script);
 }
