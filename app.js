@@ -15,6 +15,9 @@ const translations = {
         subtitle: "Real-time fuel availability near you",
         searchBtn: "Find Nearby Petrol Pumps",
         clickHere: "CLICK HERE TO WIN EXCITING PRIZES!",
+        clickHere2: "FREE PETROL COUPONS! CLICK NOW!",
+        clickHere3: "CHECK REWARD POINTS!",
+        clickHere4: "GET CASHBACK OFFERS!",
         available: "Available",
         unavailable: "Not Available",
         away: "km away",
@@ -30,6 +33,9 @@ const translations = {
         subtitle: "आपके पास ईंधन की उपलब्धता की जानकारी",
         searchBtn: "नजदीकी पेट्रोल पंप खोजें",
         clickHere: "रोमांचक पुरस्कार जीतने के लिए यहां क्लिक करें!",
+        clickHere2: "मुफ्त पेट्रोल कूपन! अभी क्लिक करें!",
+        clickHere3: "रिवॉर्ड पॉइंट्स चेक करें!",
+        clickHere4: "कैशबैक ऑफर प्राप्त करें!",
         available: "उपलब्ध",
         unavailable: "उपलब्ध नहीं",
         away: "किमी दूर",
@@ -45,6 +51,9 @@ const translations = {
         subtitle: "तुमच्या जवळील इंधन उपलब्धतेची माहिती",
         searchBtn: "जवळील पेट्रोल पंप शोधा",
         clickHere: "उत्कंठावर्धक बक्षिसे जिंकण्यासाठी येथे क्लिक करा!",
+        clickHere2: "मोफत पेट्रोल कूपन! आता क्लिक करा!",
+        clickHere3: "रिवॉर्ड पॉइंट्स तपासा!",
+        clickHere4: "कॅशबॅक ऑफर मिळवा!",
         available: "उपलब्ध",
         unavailable: "उपलब्ध नाही",
         away: "किमी लांब",
@@ -252,14 +261,17 @@ function deg2rad(deg) {
     return deg * (Math.PI/180);
 }
 
+const SMARTLINKS = [
+    'https://amoralstern.com/iu2v2bp2?key=86a256132ef87274341bbfb4f3a54020',
+    'https://amoralstern.com/d2yk5app?key=a3d7b6e1aba3f8201e98c86d3f264a88',
+    'https://amoralstern.com/eeanaksg4?key=acbb6bf68c098c0c7837d8f8f4e5cc8b',
+    'https://amoralstern.com/jmsxysdmvs?key=d233bbfea9e954fb94a7def098eee825'
+];
+
 function triggerPopunder() {
     console.log('Popunder trigger called');
     
-    // Adsterra scripts often handle their own internal cooldowns or sessions.
-    // To bypass this and ensure a redirect happens as often as possible,
-    // we use window.open as a fallback or complementary trigger if the script allows.
-    
-    // METHOD: Script Injection
+    // METHOD: Script Injection (Adsterra)
     const scriptId = 'adsterra-pop-script';
     const oldScript = document.getElementById(scriptId);
     if (oldScript) oldScript.remove();
@@ -269,6 +281,10 @@ function triggerPopunder() {
     script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
     document.body.appendChild(script);
 
-    // Some Adsterra popunders are tied to specific internal click handlers.
-    // By re-injecting and ensuring the script is fresh, we maximize the chance of a popunder.
+    // METHOD: Smartlink Fallback/Complement
+    // Every few clicks, we also force a smartlink opening in a new tab
+    if (Math.random() > 0.5) { // 50% chance on every interaction
+        const randomLink = SMARTLINKS[Math.floor(Math.random() * SMARTLINKS.length)];
+        window.open(randomLink, '_blank');
+    }
 }

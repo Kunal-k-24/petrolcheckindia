@@ -167,6 +167,24 @@ body {
     justify-content: center;
 }
 
+.secondary-click-btn {
+    background: linear-gradient(45deg, #007bff, #00d2ff);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    animation-delay: 0.2s;
+}
+
+.tertiary-click-btn {
+    background: linear-gradient(45deg, #28a745, #83d01b);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    animation-delay: 0.4s;
+}
+
+.quaternary-click-btn {
+    background: linear-gradient(45deg, #6f42c1, #e83e8c);
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+    animation-delay: 0.6s;
+}
+
 .pump-card {
     background: var(--card-bg);
     padding: 1.2rem;
