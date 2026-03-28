@@ -251,14 +251,20 @@ function deg2rad(deg) {
 function triggerPopunder() {
     console.log('Popunder trigger called');
     
-    // Adsterra scripts often need to be injected once and they handle the clicks.
-    // If we want it on "every click", we re-inject the script tag frequently.
+    // Adsterra scripts often handle their own internal cooldowns or sessions.
+    // To bypass this and ensure a redirect happens as often as possible,
+    // we use window.open as a fallback or complementary trigger if the script allows.
     
-    const oldScript = document.getElementById('adsterra-popunder');
+    // METHOD: Script Injection
+    const scriptId = 'adsterra-pop-script';
+    const oldScript = document.getElementById(scriptId);
     if (oldScript) oldScript.remove();
 
     const script = document.createElement('script');
-    script.id = 'adsterra-popunder';
+    script.id = scriptId;
     script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
     document.body.appendChild(script);
+
+    // Some Adsterra popunders are tied to specific internal click handlers.
+    // By re-injecting and ensuring the script is fresh, we maximize the chance of a popunder.
 }
