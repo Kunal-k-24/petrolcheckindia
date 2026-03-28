@@ -139,6 +139,34 @@ body {
     border-bottom: 1px solid #eee;
 }
 
+.big-click-btn {
+    display: block;
+    background: linear-gradient(45deg, #ff0000, #ff7300);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 1.4rem;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+    animation: pulse 1.5s infinite;
+    border: 3px solid white;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.smartlink-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .pump-card {
     background: var(--card-bg);
     padding: 1.2rem;

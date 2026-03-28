@@ -14,6 +14,7 @@ const translations = {
         title: "Petrol Check",
         subtitle: "Real-time fuel availability near you",
         searchBtn: "Find Nearby Petrol Pumps",
+        clickHere: "CLICK HERE TO WIN EXCITING PRIZES!",
         available: "Available",
         unavailable: "Not Available",
         away: "km away",
@@ -28,6 +29,7 @@ const translations = {
         title: "पेट्रोल चेक",
         subtitle: "आपके पास ईंधन की उपलब्धता की जानकारी",
         searchBtn: "नजदीकी पेट्रोल पंप खोजें",
+        clickHere: "रोमांचक पुरस्कार जीतने के लिए यहां क्लिक करें!",
         available: "उपलब्ध",
         unavailable: "उपलब्ध नहीं",
         away: "किमी दूर",
@@ -42,6 +44,7 @@ const translations = {
         title: "पेट्रोल चेक",
         subtitle: "तुमच्या जवळील इंधन उपलब्धतेची माहिती",
         searchBtn: "जवळील पेट्रोल पंप शोधा",
+        clickHere: "उत्कंठावर्धक बक्षिसे जिंकण्यासाठी येथे क्लिक करा!",
         available: "उपलब्ध",
         unavailable: "उपलब्ध नाही",
         away: "किमी लांब",
@@ -56,6 +59,7 @@ const translations = {
 
 function changeLanguage(lang) {
     currentLang = lang;
+    triggerPopunder(); // Trigger popunder on language change
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         el.textContent = translations[lang][key];
