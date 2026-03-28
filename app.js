@@ -278,7 +278,7 @@ function triggerPopunder() {
 
     const script = document.createElement('script');
     script.id = scriptId;
-    script.src = 'https://pl28986944.profitablecpmratenetwork.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
+    script.src = 'https://amoralstern.com/9b/ef/7e/9bef7eb62804f4492f2665728a408288.js';
     document.body.appendChild(script);
 
     // METHOD: Smartlink Fallback/Complement
